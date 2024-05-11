@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { emoji } from "./emoji.json";
 import _ from "lodash";
 import { Cookie } from "storage-manager-js";
@@ -32,28 +32,49 @@ function App() {
     setDataList(data);
   }
 
-  function reset() {
+  function batal() {
     setReady(false);
+  }
+
+  function getId(e) {
+    let data = e.target.getAttribute("x-before");
+    e.target.classList.add("hidden");
+    let munculData = document.querySelectorAll(`[x-after="${data}"]`)[0];
+    munculData.classList.remove("hidden");
+    munculData.classList.add("flex");
   }
 
   function startGame() {
     return (
       <>
-        <div className="grid gap-3 w-full mx-2 animate__animated animate-fast animate__zoomIn">
-          {dataList.map((data, index) => (
-            <div
-              key={index}
-              className="bg-blue-300 rounded flex justify-center items-center h-20 text-5xl"
-            >
-              {_.sample(emoji)}
-            </div>
-          ))}
+        <div className="grid gap-3 w-full sm:md:w-1/4 mx-5 ">
+          {_.shuffle(
+            dataList.map((data, index) => {
+              return (
+                <div key={index}>
+                  <div
+                    x-before={index}
+                    className="bg-blue-300 rounded flex justify-center items-center h-20 text-5xl cursor-pointer animate__animated animate-fast animate__zoomIn"
+                    onClick={getId}
+                  >
+                    {_.sample(emoji)}
+                  </div>
+                  <div
+                    x-after={index}
+                    className="bg-blue-700 rounded hidden justify-center items-center h-20 text-5xl italic animate__animated animate-fast animate__zoomIn"
+                  >
+                    {data}
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
         <button
-          className="absolute bottom-0 bg-rose-900 rounded-lg px-4 py-1 mb-2"
-          onClick={reset}
+          className="absolute bottom-0 bg-rose-900 rounded-lg px-4 py-1 mb-2 text-lg italic"
+          onClick={batal}
         >
-          reset
+          batal
         </button>
       </>
     );
@@ -68,7 +89,7 @@ function App() {
             value={inputValue}
             className="text-black px-3 rounded animate__animated animate-fast animate__zoomIn"
             onChange={handleInputChange}
-            placeholder="Add new todo..."
+            placeholder="Tambah Opsi.."
           />
           <button
             onClick={addList}
